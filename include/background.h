@@ -20,7 +20,7 @@ enum gravity_model {propto_omega, propto_scale,
     galileon, nkgb, 
     brans_dicke, 
     quintessence_monomial, quintessence_tracker,
-    alpha_attractor_canonical
+    alpha_attractor_canonical,quintessence_exp,k_essence
 }; //write here the different models
 
 // enum gravity_model_subclass {quint_exp, cccg_exp, cccg_pow}; //write here model subclasses
