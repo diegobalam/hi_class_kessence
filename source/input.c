@@ -1351,6 +1351,95 @@ int input_read_parameters(
 	}//end of no has_dxdy_guess_smg
       }//end of quintessence_monomial
       
+      if (strcmp(string1,"quintessence_exp") == 0) {
+	pba->gravity_model_smg = quintessence_exp;
+	pba->field_evolution_smg = _TRUE_;
+    pba->is_quintessence_smg = _TRUE_;
+	flag2=_TRUE_;
+	
+	pba->parameters_size_smg = 4;
+	class_read_list_of_doubles("parameters_smg",pba->parameters_smg,pba->parameters_size_smg);
+	
+    double scf_lambda = pba->parameters_smg[0];
+    double V0 = pba->parameters_smg[1];
+    double phi_prime_ini_smg = pba->parameters_smg[2];
+    double phi_ini_smg =  pba->parameters_smg[3];
+    
+    double P_ini = pow(phi_ini_smg, scf_lambda);  // V=cte*P(phi)
+    
+    double phi_end_guess = fmax(phi_ini_smg,2);
+    
+    	if (has_tuning_index_smg == _FALSE_)
+	  pba->tuning_index_smg = 1; //use V0 for default tuning
+	
+	if (has_dxdy_guess_smg == _FALSE_){
+ 
+	  if(pba->tuning_index_smg == 1){
+            
+	    V0 = pba->Omega0_smg/(1+exp(-scf_lambda*phi_end_guess));
+            pba->tuning_dxdy_guess_smg = 1/(1+exp(-scf_lambda*phi_end_guess));
+            pba->parameters_smg[1] = V0;
+	    
+	  }
+
+	  if(pba->tuning_index_smg == 3){
+            phi_ini_smg = -log(pba->Omega0_smg/V0-1)/scf_lambda;
+            pba->parameters_smg[3] = phi_ini_smg;
+            pba->tuning_dxdy_guess_smg = -exp(scf_lambda*phi_ini_smg)/(V0*scf_lambda);
+	  }
+	}//end of no has_dxdy_guess_smg
+      }//end of quintessence_exp
+      
+      
+      if (strcmp(string1,"k_essence") == 0) {
+	pba->gravity_model_smg = k_essence;
+	pba->field_evolution_smg = _TRUE_;
+    pba->is_quintessence_smg = _TRUE_;
+	flag2=_TRUE_;
+	
+	pba->parameters_size_smg = 7;
+	class_read_list_of_doubles("parameters_smg",pba->parameters_smg,pba->parameters_size_smg);
+
+    double lambda = pba->parameters_smg[0];
+    double V0 = pba->parameters_smg[1];
+    double n=pba->parameters_smg[2];
+    double alpha=pba->parameters_smg[3];
+    double beta=pba->parameters_smg[4];
+    
+    double phi_prime_ini_smg = pba->parameters_smg[5];
+    double phi_ini_smg =  pba->parameters_smg[6];
+
+   
+    double phi_end_guess = fmax(phi_ini_smg,2);
+
+    // class_test( ((abs(N)<1) || (abs(N)>7)), errmsg, "Exponent out of range. N must be a interger in (1,7)-range" );
+
+	if (has_tuning_index_smg == _FALSE_)
+	  pba->tuning_index_smg = 1; //use V0 for default tuning
+	
+	if (has_dxdy_guess_smg == _FALSE_){
+ 
+	  if(pba->tuning_index_smg == 1){
+//           if(phi_ini_smg != 0){
+            V0 = pba->Omega0_smg/(1-exp(-lambda*phi_end_guess))/alpha/beta; 
+            pba->tuning_dxdy_guess_smg =1/(1-exp(-lambda*phi_end_guess))/alpha/beta;
+            pba->parameters_smg[1] = V0;
+//           }
+//           else{
+//             V0 = pba->Omega0_smg/exp(-lambda*1.e-40); 
+//             pba->tuning_dxdy_guess_smg = 1./exp(-lambda*1.e-40); 
+//             pba->parameters_smg[1] = V0;
+// 
+//           }
+	  }
+
+	  if(pba->tuning_index_smg == 6){ 
+       phi_ini_smg =-log(pba->Omega0_smg/alpha/beta)/lambda;
+       pba->parameters_smg[6] = phi_ini_smg;
+       pba->tuning_dxdy_guess_smg = -exp(lambda*phi_ini_smg)/(alpha*beta*V0*lambda);
+	  }
+	}//end of no has_dxdy_guess_smg
+      }//end of k_essence  
       
     if (strcmp(string1,"quintessence_tracker") == 0) {
 	pba->gravity_model_smg = quintessence_tracker;
@@ -1620,7 +1709,7 @@ if (strcmp(string1,"nkgb") == 0 || strcmp(string1,"n-kgb") == 0 || strcmp(string
 
       class_test(flag2==_FALSE_,
 		 errmsg,
-		 "could not identify gravity_theory value, check that it is one of 'propto_omega', 'propto_scale', 'constant_alphas', 'eft_alphas_power_law', 'eft_gammas_power_law', 'eft_gammas_exponential', 'brans_dicke', 'galileon', 'nKGB', 'quintessence_monomial', 'quintessence_tracker', 'alpha_attractor_canonical' ...");
+		 "could not identify gravity_theory value, check that it is one of 'propto_omega', 'propto_scale', 'quintessence_exp','k_essence','constant_alphas', 'eft_alphas_power_law', 'eft_gammas_power_law', 'eft_gammas_exponential', 'brans_dicke', 'galileon', 'nKGB', 'quintessence_monomial', 'quintessence_tracker', 'alpha_attractor_canonical' ...");
 
     }// end of loop over models
 
