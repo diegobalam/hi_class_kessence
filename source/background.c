@@ -3364,7 +3364,7 @@ int background_gravity_functions(
       double n=pba->parameters_smg[2];
       double alpha=pba->parameters_smg[3];
       double beta=pba->parameters_smg[4];
-      double V=V0*(1-exp(-lambda*phi));
+      double V=V0*(1+exp(-lambda*phi));
       double y=X/V;
       double h=-alpha*pow((y+beta),n);
       double V_prime=-lambda*V0*exp(-lambda*phi);
