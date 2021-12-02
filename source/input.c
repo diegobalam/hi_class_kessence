@@ -1391,7 +1391,7 @@ int input_read_parameters(
       }//end of quintessence_exp
       
       
-      if (strcmp(string1,"k_essence") == 0) {
+if (strcmp(string1,"k_essence") == 0) {
 	pba->gravity_model_smg = k_essence;
 	pba->field_evolution_smg = _TRUE_;
     pba->is_quintessence_smg = _TRUE_;
@@ -1421,8 +1421,8 @@ int input_read_parameters(
  
 	  if(pba->tuning_index_smg == 1){
 //           if(phi_ini_smg != 0){
-            V0 = pba->Omega0_smg/(1-exp(-lambda*phi_end_guess))/alpha/beta; 
-            pba->tuning_dxdy_guess_smg =1/(1-exp(-lambda*phi_end_guess))/alpha/beta;
+            V0 = pba->Omega0_smg/(1+exp(-lambda*phi_end_guess))/alpha/beta; 
+            pba->tuning_dxdy_guess_smg =1/(1+exp(-lambda*phi_end_guess))/alpha/beta;
             pba->parameters_smg[1] = V0;
 //           }
 //           else{
@@ -1434,12 +1434,12 @@ int input_read_parameters(
 	  }
 
 	  if(pba->tuning_index_smg == 6){ 
-       phi_ini_smg =-log(pba->Omega0_smg/alpha/beta)/lambda;
+       phi_ini_smg =-log(pba->Omega0_smg/V0/alpha/pow(beta,n)-1)/lambda;
        pba->parameters_smg[6] = phi_ini_smg;
-       pba->tuning_dxdy_guess_smg = -exp(lambda*phi_ini_smg)/(alpha*beta*V0*lambda);
+       pba->tuning_dxdy_guess_smg = -exp(lambda*phi_ini_smg)/(alpha*pow(beta,n)*V0*lambda);
 	  }
 	}//end of no has_dxdy_guess_smg
-      }//end of k_essence  
+      }//end of k_essence
       
     if (strcmp(string1,"quintessence_tracker") == 0) {
 	pba->gravity_model_smg = quintessence_tracker;
