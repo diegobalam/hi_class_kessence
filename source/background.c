@@ -3357,7 +3357,7 @@ int background_gravity_functions(
       
      }
      
-     else if (pba->gravity_model_smg == k_essence) {
+    else if (pba->gravity_model_smg == k_essence) {
 
       double lambda= pba->parameters_smg[0];
       double V0 = pba->parameters_smg[1];
@@ -3370,9 +3370,9 @@ int background_gravity_functions(
       double V_prime=-lambda*V0*exp(-lambda*phi);
       
       
-      G2 = X+h*V;
-      G2_X = 1.-n*alpha*pow((X/V)+beta,n-1);
-      G2_phi = -alpha* V_prime * pow((X/V)+beta,n)*((1-n)*(X/V)* pow(X/V+beta,-1));
+      G2 = X+pow(pba->H0/pba->h,2.)*h*V;
+      G2_X = 1.-pow(pba->H0/pba->h,2.)*n*alpha*pow((X/V)+beta,n-1);
+      G2_phi = -pow(pba->H0/pba->h,2.)*alpha* V_prime * pow((X/V)+beta,n)*((1-n)*(X/V)* pow(X/V+beta,-1));
       }
 
     
