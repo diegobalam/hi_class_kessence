@@ -2562,7 +2562,16 @@ int background_initial_conditions(
 	  pvecback_integration[pba->index_bi_phi_smg] = pba->parameters_smg[3];
 	  pvecback_integration[pba->index_bi_phi_prime_smg] = pba->parameters_smg[2]*pba->H0;
 	break;
-    
+ 
+      case quintessence_exp:
+	  pvecback_integration[pba->index_bi_phi_smg] = pba->parameters_smg[3];
+	  pvecback_integration[pba->index_bi_phi_prime_smg] =pba->parameters_smg[2]*pba->H0;
+      break;
+      
+       case k_essence:
+	  pvecback_integration[pba->index_bi_phi_smg] = pba->parameters_smg[6];
+	  pvecback_integration[pba->index_bi_phi_prime_smg] = pba->parameters_smg[5]*pba->H0;
+	break;
     case quintessence_tracker:
           
         /* Tracker quintessence at early times
@@ -3335,6 +3344,38 @@ int background_gravity_functions(
       G2_phi = -N*V0*pow(pba->H0/pba->h,2.)*pow(phi,N-1.);
     }
     
+    else if (pba->gravity_model_smg == quintessence_exp) {
+      
+      double scf_lambda=pba->parameters_smg[0];
+      double V0 = pba->parameters_smg[1];
+      double V=V0*(1+exp(-scf_lambda*phi));
+            
+      G2 = X - pow(pba->H0/pba->h,2.)*V0*(1+exp(-scf_lambda*phi)); // V written as in arXiv:1406.2301 in CLASS units
+      G2_X = 1;
+      G2_phi =-scf_lambda*pow(pba->H0/pba->h,2.)*V0*exp(-scf_lambda*phi) ;
+      
+      
+     }
+     
+     else if (pba->gravity_model_smg == k_essence) {
+
+      double lambda= pba->parameters_smg[0];
+      double V0 = pba->parameters_smg[1];
+      double n=pba->parameters_smg[2];
+      double alpha=pba->parameters_smg[3];
+      double beta=pba->parameters_smg[4];
+      double V=V0*(1-exp(-lambda*phi));
+      double y=X/V;
+      double h=-alpha*pow((y+beta),n);
+      double V_prime=-lambda*V0*exp(-lambda*phi);
+      
+      
+      G2 = X+h*V;
+      G2_X = 1.-n*alpha*pow((X/V)+beta,n-1);
+      G2_phi = -alpha* V_prime * pow((X/V)+beta,n)*((1-n)*(X/V)* pow(X/V+beta,-1));
+      }
+
+    
     else if (pba->gravity_model_smg == quintessence_tracker) {
         // V written as in arXiv:1406.2301 in CLASS units
 
@@ -3845,6 +3886,20 @@ int background_gravity_parameters(
 	    pba->parameters_smg[0], pba->parameters_smg[1], pba->parameters_smg[1]*pow(pba->H0/pba->h,2),
 	    pba->parameters_smg[2], pba->parameters_smg[3]);
      break;
+     
+  case quintessence_exp:
+     printf("Modified gravity: quintessence_exponential with parameters: \n");
+     printf("-> lambda_scf = %g, V0 = %g, V0* = %g, phi_prime_ini = %g, phi_ini = %g \n",
+	    pba->parameters_smg[0], pba->parameters_smg[1], pba->parameters_smg[1]*pow(pba->H0/pba->h,2),
+	    pba->parameters_smg[2], pba->parameters_smg[3]);
+     break;
+     
+   case k_essence:
+     printf("Modified gravity: quintessence_monomial with parameters: \n");
+     printf("-> lambda = %g, V0 = %g, V0* = %g, n=%g, alpha=%g, beta=%g phi_prime_ini = %g, phi_ini = %g \n",
+	    pba->parameters_smg[0], pba->parameters_smg[1], pba->parameters_smg[1]*pow(pba->H0/pba->h,2),
+	    pba->parameters_smg[2], pba->parameters_smg[3],pba->parameters_smg[4],pba->parameters_smg[5],pba->parameters_smg[6]);
+     break; 
      
    case quintessence_tracker:
      printf("Modified gravity: quintessence_tracker with parameters: \n");
